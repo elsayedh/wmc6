@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+         <record id="hsn_invoice_view_form_" model="ir.ui.view">
+        <field name="name"> hsn_invoice.view.form.inherit.button</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath   expr="//button[@name='action_invoice_sent']"   position="before">
+                <button name="print_report" type="object" string="Print" class="oe_highlight"/>
+            </xpath>
+        </field>
+    </record>
+  </data>
+</odoo>

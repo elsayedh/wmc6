@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="point_of_sale.template" xml:space="preserve">
+    <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('orderlines')]" position="before">
+            <div style='text-align:center;border-bottom: 1px dashed black;'>
+                <strong> <b><bdi>Sales INVOICE  /  فاتورة مبيعات</bdi> </b></strong>
+            </div>
+        </xpath>         
+        <xpath expr="//div[hasclass('pos-receipt-contact')]" position="replace">            
+            <div class="pos-receipt-contact" style="font-size:18px; align:left;">
+                <t t-if="receipt.company.contact_address">
+                    <div><t t-esc="receipt.company.contact_address" /></div>
+                </t>
+                <t t-if="receipt.company.phone">
+                    <div><b><bdi>Tel  / تليفون:</bdi></b><t t-esc="receipt.company.phone" /></div>
+                </t>
+                
+                <t t-if="receipt.company.email">
+                    <div><t t-esc="receipt.company.email" /></div>
+                </t>
+                <t t-if="receipt.company.website">
+                    <div><t t-esc="receipt.company.website" /></div>
+                </t>
+                <t t-if="receipt.header_html">
+                    <t t-raw="receipt.header_html" />
+                </t>
+                <t t-if="!receipt.header_html and receipt.header">
+                    <div><t t-esc="receipt.header" /></div>
+                </t>
+                <t t-if="receipt.company.vat">
+                    <div><b><bdi>VAT  / السجل الضريبى:</bdi></b><t t-esc="receipt.company.vat" /></div>
+                </t>
+                 <t t-if='receipt.client'>
+                     <div><b><bdi>Customer / العميل: </bdi> </b><t t-esc='receipt.client.name' /></div>
+                       <div><b><bdi> Mobile  / جوال : </bdi> </b><t t-esc='receipt.client.phone' /></div>
+
+            </t>
+                <t t-if="receipt.cashier">
+                    <div class="cashier">
+                        <div>--------------------------------</div>
+                        <div><b><bdi>Served by / البيع بواسطة </bdi> </b> <t t-esc="receipt.cashier" /></div>
+                    </div>
+                </t>
+            </div> 
+        </xpath>
+        <xpath expr="//div[hasclass('orderlines')]" position="replace"> 
+            <div class="orderlines">      
+                <table class='receipt-orderlines' style="font-size:18px; align:left;">
+
+                    <tr style="border-bottom: 1px dashed black;">
+                        <th style=' font-size:18px;text-align:left'><bdi>Name  /  اسم المنتج </bdi></th>
+<!--                        <th style='text-align:left'>Qty</th>-->
+<!--                        <th style='text-align:right'>Unit.Price</th>-->
+<!--                        <th style='text-align:right'>Price(Inc VAT)</th>-->
+                    </tr>
+                    <tr t-foreach="orderlines" t-as="orderline" t-key="orderline.id">
+                        <tr>
+                              <td style="font-size:18px; align:left;">
+                            <t t-esc="orderline.get_product().display_name"/>
+                                  <t t-if="orderline.get_product().arabic_name">
+                              <t t-esc="' / ' + orderline.get_product().arabic_name"/>
+                                 </t>
+                             <t t-if="orderline.get_discount() > 0">
+                                <div class="pos-disc-font">
+                                    <b> <bdi> With a / مع </bdi></b><t t-esc="orderline.get_discount()"/>% discount
+                                </div>
+                            </t>
+                        </td>
+                        </tr>
+                        <tr >
+                        <td>
+                            <b><bdi>Qty  / الكمية:  </bdi></b> <t t-esc="orderline.get_quantity_str_with_unit()"/>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <!-- <t t-set="a" t-value="orderline.quantityStr"></t> -->
+                            <b><bdi> Unit Price / سعر الوحدة : </bdi> </b><t t-esc="env.pos.format_currency(orderline.get_unit_display_price())"></t>
+                            <!-- <t t-set="c" t-value="b/a"></t>
+                            <t t-esc="c"/> -->
+                        </td>
+                        </tr>
+                        <tr>
+                        <td style='text-align:left;  '>
+                            <b> <bdi>Price / سعر الاجمالى:</bdi> </b> <t t-esc="env.pos.format_currency(orderline.get_price_with_tax())"/>
+                        </td>
+                        </tr>
+                    </tr>
+                </table>
+            </div>
+        </xpath>
+        <xpath expr="//t[@t-if='!isTaxIncluded']" position="replace">
+            <div class="pos-receipt-right-align">--------</div>
+            <br/>
+            <div style="font-size:18px; align:left;">
+                <b><bdi>Subtotal  / الاجمالى</bdi> </b><span t-esc="env.pos.format_currency(receipt.subtotal)" class="pos-receipt-right-align"/></div>
+                <t t-foreach="receipt.tax_details" t-as="tax" t-key="tax.name">
+                <div style="font-size:18px; align:left;" >
+                    <b><bdi>VAT  / الضريبة: </bdi></b><span t-esc='env.pos.format_currency_no_symbol(tax.amount)' class="pos-receipt-right-align"/>
+                </div>
+            </t>
+        </xpath>
+ <xpath expr="//div[hasclass('after-footer')]" position="replace">
+ <div class="after-footer" style="font-size:18px; align:center;">
+                <t t-foreach="receipt.paymentlines" t-as="line">
+                    <t t-if="line.ticket">
+                        <br />
+                        <div class="pos-payment-terminal-receipt">
+                            <t t-raw="line.ticket" />
+                        </div>
+                    </t>
+                </t>
+            </div>
+ </xpath>
+
+              <xpath expr="//div[hasclass('pos-receipt-order-data')]" position="replace">
+                  <div class="pos-receipt-order-data" style="font-size:18px; align:center;">
+                <div><t t-esc="receipt.name" /></div>
+                <div><t t-esc="receipt.date.localestring" /></div>
+                      <div> <b>  Thank You For Deal With Us       </b></div>
+                      <div> <b>  شكرا لتعاملك معنا    </b></div>
+                         <br/>
+                <br/>
+                         <br/>
+                <br/>
+                <br/>
+                <br/>
+                     <div>  </div>
+                       <div>   </div>
+                       <div> </div>
+                      <div>   .</div>
+            </div>
+              </xpath>
+       
+    </t>
+</templates>

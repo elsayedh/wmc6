@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+access_sale_day_book_wizard,access_sale_day_book_wizard,model_sale_day_book_wizard,,1,1,1,1
+access_sale_day_book_report_excel,access_sale_day_book_report_excel,model_sale_day_book_report_excel,,1,1,1,1
+access_report_bi_inventory_valuation_reports_sales_daybook_template,access_report_bi_inventory_valuation_reports_sales_daybook_template,model_report_bi_inventory_valuation_reports_sales_daybook_template,,1,1,1,1
+
